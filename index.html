@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Urban Asset Upcycle — Activating Empty Buildings</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --teal: #1a7a6a;
+      --teal-dark: #0f5548;
+      --teal-light: #e6f5f2;
+      --navy: #1a2a3a;
+      --gold: #c8a84b;
+      --cream: #f7f4ee;
+      --white: #ffffff;
+      --text: #2c3a34;
+      --muted: #6a7a72;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(26, 42, 58, 0.96);
+      backdrop-filter: blur(8px);
+      padding: 0 40px;
+      height: 64px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 22px;
+      color: #fff;
+      letter-spacing: 0.5px;
+    }
+    .nav-logo span { color: var(--gold); }
+    .nav-links { display: flex; gap: 32px; }
+    .nav-links a {
+      color: #a8c0b8; text-decoration: none; font-size: 13px;
+      font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: #fff; }
+    .nav-cta {
+      background: var(--teal); color: #fff !important;
+      padding: 8px 20px; border-radius: 4px !important;
+      text-transform: none !important; letter-spacing: 0 !important;
+      font-size: 14px !important;
+    }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      background: linear-gradient(160deg, var(--navy) 0%, #1a3a30 55%, #0f2a22 100%);
+      display: flex; align-items: center;
+      padding: 80px 40px 60px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    .hero-grid {
+      max-width: 1100px; margin: 0 auto; width: 100%;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;
+      position: relative; z-index: 1;
+    }
+    .hero-tag {
+      display: inline-block;
+      background: rgba(200,168,75,0.15);
+      border: 1px solid rgba(200,168,75,0.4);
+      color: var(--gold);
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 2px; text-transform: uppercase;
+      padding: 6px 14px; border-radius: 20px;
+      margin-bottom: 24px;
+    }
+    .hero h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(36px, 5vw, 58px);
+      color: #fff;
+      line-height: 1.1;
+      margin-bottom: 24px;
+    }
+    .hero h1 em {
+      font-style: italic; color: #7ac8b8;
+    }
+    .hero-sub {
+      font-size: 17px; color: #8ab0a8; line-height: 1.7;
+      margin-bottom: 36px; font-weight: 300;
+    }
+    .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; }
+    .btn-primary {
+      background: var(--teal);
+      color: #fff; border: none;
+      padding: 14px 28px; border-radius: 6px;
+      font-size: 15px; font-weight: 600;
+      cursor: pointer; text-decoration: none;
+      display: inline-block;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .btn-primary:hover { background: var(--teal-dark); transform: translateY(-1px); }
+    .btn-outline {
+      background: transparent;
+      color: #a8c8c0; border: 1px solid rgba(168,200,192,0.4);
+      padding: 14px 28px; border-radius: 6px;
+      font-size: 15px; font-weight: 500;
+      cursor: pointer; text-decoration: none;
+      display: inline-block;
+      transition: all 0.2s;
+    }
+    .btn-outline:hover { border-color: #a8c8c0; color: #fff; }
+
+    /* Hero card */
+    .hero-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 36px;
+      backdrop-filter: blur(4px);
+    }
+    .hero-card h3 {
+      font-family: 'DM Serif Display', serif;
+      color: #fff; font-size: 20px; margin-bottom: 24px;
+      padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .calc-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .calc-row:last-child { border-bottom: none; }
+    .calc-label { font-size: 13px; color: #8ab0a8; }
+    .calc-val { font-size: 15px; color: #fff; font-weight: 600; }
+    .calc-val.gold { color: var(--gold); font-size: 22px; }
+    .calc-val.red { color: #e88080; text-decoration: line-through; font-size: 13px; }
+    .calc-note {
+      margin-top: 20px; padding: 14px;
+      background: rgba(26,122,106,0.2); border-radius: 8px;
+      font-size: 13px; color: #7ac8b8; line-height: 1.6;
+    }
+
+    /* HOW IT WORKS */
+    .section { padding: 90px 40px; }
+    .section-inner { max-width: 1100px; margin: 0 auto; }
+    .section-label {
+      font-size: 11px; font-weight: 600; letter-spacing: 3px;
+      text-transform: uppercase; color: var(--teal);
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(28px, 4vw, 44px);
+      color: var(--navy); line-height: 1.15;
+      margin-bottom: 16px;
+    }
+    .section-sub {
+      font-size: 17px; color: var(--muted); font-weight: 300;
+      max-width: 560px; line-height: 1.7; margin-bottom: 56px;
+    }
+
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+    .step {
+      background: #fff;
+      border-radius: 12px;
+      padding: 32px;
+      border-top: 3px solid var(--teal);
+      box-shadow: 0 2px 20px rgba(0,0,0,0.06);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .step:hover { transform: translateY(-4px); box-shadow: 0 8px 32px rgba(0,0,0,0.1); }
+    .step-num {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--teal-light); color: var(--teal);
+      font-weight: 700; font-size: 14px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 20px;
+    }
+    .step h4 { font-size: 17px; color: var(--navy); margin-bottom: 10px; font-weight: 600; }
+    .step p { font-size: 14px; color: var(--muted); line-height: 1.7; }
+
+    /* RATES BAND */
+    .rates-band {
+      background: var(--navy);
+      padding: 80px 40px;
+    }
+    .rates-inner { max-width: 1100px; margin: 0 auto; }
+    .rates-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+    .rates-text .section-title { color: #fff; }
+    .rates-text .section-sub { color: #8ab0a8; }
+    .stat-blocks { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .stat-block {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px; padding: 24px;
+      text-align: center;
+    }
+    .stat-big {
+      font-family: 'DM Serif Display', serif;
+      font-size: 42px; color: var(--gold);
+      line-height: 1; margin-bottom: 8px;
+    }
+    .stat-label { font-size: 12px; color: #6a9a8a; line-height: 1.5; }
+
+    /* FOR LANDLORDS */
+    .landlords { background: var(--teal-light); }
+    .benefit-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+    .benefit {
+      background: #fff; border-radius: 10px; padding: 24px;
+      display: flex; gap: 16px; align-items: flex-start;
+      box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+    }
+    .benefit-icon {
+      width: 40px; height: 40px; border-radius: 8px;
+      background: var(--teal-light); color: var(--teal);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; flex-shrink: 0;
+    }
+    .benefit h5 { font-size: 15px; color: var(--navy); margin-bottom: 6px; font-weight: 600; }
+    .benefit p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+    /* BUILDINGS */
+    .buildings-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .building-card {
+      background: #fff; border-radius: 10px; overflow: hidden;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+      transition: transform 0.2s;
+    }
+    .building-card:hover { transform: translateY(-3px); }
+    .building-header {
+      background: linear-gradient(135deg, var(--teal-dark), var(--teal));
+      padding: 28px 24px 20px;
+      display: flex; gap: 12px; align-items: center;
+    }
+    .building-icon { font-size: 28px; }
+    .building-type { font-size: 15px; color: #fff; font-weight: 600; }
+    .building-body { padding: 20px 24px; }
+    .building-body p { font-size: 13px; color: var(--muted); line-height: 1.65; }
+
+    /* PROCESS */
+    .process-timeline { position: relative; padding-left: 32px; }
+    .process-timeline::before {
+      content: '';
+      position: absolute; left: 10px; top: 8px; bottom: 8px;
+      width: 2px; background: linear-gradient(to bottom, var(--teal), var(--teal-light));
+    }
+    .timeline-item { position: relative; margin-bottom: 40px; }
+    .timeline-dot {
+      position: absolute; left: -36px; top: 4px;
+      width: 20px; height: 20px; border-radius: 50%;
+      background: var(--teal); border: 3px solid var(--cream);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .timeline-item h4 { font-size: 16px; color: var(--navy); margin-bottom: 8px; font-weight: 600; }
+    .timeline-item p { font-size: 14px; color: var(--muted); line-height: 1.7; }
+    .timeline-tag {
+      display: inline-block;
+      background: var(--teal-light); color: var(--teal);
+      font-size: 11px; font-weight: 600; letter-spacing: 1px;
+      padding: 3px 10px; border-radius: 20px; margin-bottom: 8px;
+    }
+
+    /* CTA */
+    .cta-band {
+      background: linear-gradient(135deg, var(--teal-dark) 0%, #0a3028 100%);
+      padding: 90px 40px;
+      text-align: center;
+    }
+    .cta-band h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(28px, 4vw, 46px);
+      color: #fff; margin-bottom: 16px;
+    }
+    .cta-band p { font-size: 17px; color: #8ab0a8; margin-bottom: 36px; font-weight: 300; }
+    .cta-btns { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+
+    /* FOOTER */
+    footer {
+      background: #0f1e18;
+      padding: 48px 40px;
+      text-align: center;
+      color: #3a5a4a;
+      font-size: 13px;
+    }
+    footer .footer-logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 24px; color: #5a8a72; margin-bottom: 12px;
+    }
+    footer .footer-logo span { color: var(--gold); }
+    footer p { color: #3a5a4a; margin-top: 8px; }
+    footer a { color: #5a8a72; text-decoration: none; }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      nav { padding: 0 20px; }
+      .nav-links { display: none; }
+      .hero { padding: 80px 24px 48px; }
+      .hero-grid { grid-template-columns: 1fr; gap: 40px; }
+      .section { padding: 60px 24px; }
+      .steps { grid-template-columns: 1fr; }
+      .rates-band { padding: 60px 24px; }
+      .rates-grid { grid-template-columns: 1fr; gap: 40px; }
+      .stat-blocks { grid-template-columns: 1fr 1fr; }
+      .benefit-grid { grid-template-columns: 1fr; }
+      .buildings-grid { grid-template-columns: 1fr; }
+      .cta-band { padding: 60px 24px; }
+      footer { padding: 40px 24px; }
+    }
+
+    /* Animations */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .hero-content > * { animation: fadeUp 0.7s ease both; }
+    .hero-content > *:nth-child(1) { animation-delay: 0.1s; }
+    .hero-content > *:nth-child(2) { animation-delay: 0.2s; }
+    .hero-content > *:nth-child(3) { animation-delay: 0.35s; }
+    .hero-content > *:nth-child(4) { animation-delay: 0.5s; }
+    .hero-card { animation: fadeUp 0.7s ease 0.4s both; }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Urban Asset <span>Upcycle</span></div>
+  <div class="nav-links">
+    <a href="#how-it-works">How It Works</a>
+    <a href="#for-landlords">For Landlords</a>
+    <a href="#buildings">Buildings</a>
+    <a href="#contact" class="nav-cta">Get In Touch</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid">
+    <div class="hero-content">
+      <div class="hero-tag">Registered Charity · Meanwhile Use</div>
+      <h1>Empty buildings.<br><em>Full potential.</em></h1>
+      <p class="hero-sub">We partner with landlords to temporarily activate vacant commercial properties — saving them thousands in business rates while creating community spaces that transform neighbourhoods.</p>
+      <div class="hero-btns">
+        <a href="#for-landlords" class="btn-primary">I Have a Vacant Building</a>
+        <a href="#how-it-works" class="btn-outline">How It Works</a>
+      </div>
+    </div>
+    <div class="hero-card">
+      <h3>🧮 Your Rates Saving Calculator</h3>
+      <div class="calc-row">
+        <span class="calc-label">Example rateable value</span>
+        <span class="calc-val">£45,000</span>
+      </div>
+      <div class="calc-row">
+        <span class="calc-label">Annual rates bill (full)</span>
+        <span class="calc-val red">£23,040 / yr</span>
+      </div>
+      <div class="calc-row">
+        <span class="calc-label">After mandatory 80% relief</span>
+        <span class="calc-val">£4,608 / yr</span>
+      </div>
+      <div class="calc-row">
+        <span class="calc-label">With discretionary top-up</span>
+        <span class="calc-val gold">£0 / yr</span>
+      </div>
+      <div class="calc-note">
+        ✅ Registered charities are entitled by law to 80% mandatory relief. We apply on your behalf from day one.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section" id="how-it-works">
+  <div class="section-inner">
+    <div class="section-label">The Process</div>
+    <h2 class="section-title">Simple. Transparent. Beneficial to all.</h2>
+    <p class="section-sub">Meanwhile use is not a loophole — it is a legitimate, council-supported mechanism to bring empty buildings back to life while delivering real financial benefit to property owners.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h4>We Find Your Building</h4>
+        <p>We identify vacant commercial properties and approach owners with a detailed rates saving calculation specific to their property — real numbers, no guesswork.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h4>We Agree a Meanwhile Licence</h4>
+        <p>A simple, flexible licence agreement — typically 6–24 months with clear notice periods on both sides. No complex legal fees for you. We use solicitor-drafted standard documents.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h4>We Apply for Rates Relief</h4>
+        <p>As a registered charity in occupation, we apply for 80% mandatory charitable relief — and the discretionary 20% top-up. Your liability reduces from day one of our occupation.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <h4>We Activate the Space</h4>
+        <p>Within 30 days we open the building for community use — workshops, training, pop-ups, studios. The property is maintained, secured, and contributing to the local economy.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <h4>You Get Your Building Back</h4>
+        <p>When you're ready — a tenant arrives, planning permission granted, sale agreed — we vacate professionally on agreed notice. Clean exit, impact report provided, relationship maintained.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">6</div>
+        <h4>Everyone Wins</h4>
+        <p>You saved thousands in rates. The community gained a resource. We advanced our charitable mission. The high street looks better. That is the meanwhile use model at its best.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RATES BAND -->
+<section class="rates-band">
+  <div class="rates-inner">
+    <div class="rates-grid">
+      <div class="rates-text">
+        <div class="section-label" style="color:#6aab7a">The Numbers</div>
+        <h2 class="section-title">Empty buildings are expensive. We fix that.</h2>
+        <p class="section-sub">After just 3 months of vacancy, landlords pay full business rates. For many properties that means £10,000–£80,000 per year — indefinitely, until a tenant arrives.</p>
+        <a href="#contact" class="btn-primary" style="margin-top:8px">Get a Free Rates Assessment</a>
+      </div>
+      <div class="stat-blocks">
+        <div class="stat-block">
+          <div class="stat-big">80%</div>
+          <div class="stat-label">Mandatory charitable relief — a legal entitlement</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-big">100%</div>
+          <div class="stat-label">Potential saving with discretionary top-up from council</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-big">3mo</div>
+          <div class="stat-label">When full rates kick in on vacant commercial property</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-big">£0</div>
+          <div class="stat-label">Rent charged to landlord — rates saving is the exchange</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOR LANDLORDS -->
+<section class="section landlords" id="for-landlords">
+  <div class="section-inner">
+    <div class="section-label">For Property Owners</div>
+    <h2 class="section-title">What you gain from meanwhile use</h2>
+    <p class="section-sub">This is a genuine financial arrangement — not philanthropy. You receive measurable benefits in exchange for temporary access.</p>
+    <div class="benefit-grid">
+      <div class="benefit">
+        <div class="benefit-icon">💷</div>
+        <div>
+          <h5>Dramatic Rates Reduction</h5>
+          <p>80% mandatory relief the moment we take occupation. We apply on your behalf and keep you informed throughout the process.</p>
+        </div>
+      </div>
+      <div class="benefit">
+        <div class="benefit-icon">🔒</div>
+        <div>
+          <h5>Property Security</h5>
+          <p>An occupied, active building is far less likely to be vandalised, broken into, or attract squatters. We heat and maintain the interior.</p>
+        </div>
+      </div>
+      <div class="benefit">
+        <div class="benefit-icon">📋</div>
+        <div>
+          <h5>Flexible Exit</h5>
+          <p>Our licences include clear notice clauses — typically 2–3 months. If a commercial tenant arrives or planning consent is granted, we vacate professionally.</p>
+        </div>
+      </div>
+      <div class="benefit">
+        <div class="benefit-icon">🌱</div>
+        <div>
+          <h5>Community Goodwill</h5>
+          <p>Your building becomes a visible community asset. Local press, social media, and council relationships all benefit from association with positive regeneration.</p>
+        </div>
+      </div>
+      <div class="benefit">
+        <div class="benefit-icon">📊</div>
+        <div>
+          <h5>Full Transparency</h5>
+          <p>We provide regular updates, a copy of the rates relief confirmation, and an impact report on exit. You always know what's happening in your building.</p>
+        </div>
+      </div>
+      <div class="benefit">
+        <div class="benefit-icon">⚖️</div>
+        <div>
+          <h5>Legally Sound</h5>
+          <p>All agreements are solicitor-drafted. Occupation is genuine and active — we meet all Charity Commission and council requirements for rates relief.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BUILDINGS -->
+<section class="section" id="buildings" style="background:#fff;">
+  <div class="section-inner">
+    <div class="section-label">What We Activate</div>
+    <h2 class="section-title">The buildings we work with</h2>
+    <p class="section-sub">We focus on commercial properties that have been vacant for 3+ months and have a rateable value where the rates saving makes meanwhile use compelling.</p>
+    <div class="buildings-grid">
+      <div class="building-card">
+        <div class="building-header">
+          <div class="building-icon">🏪</div>
+          <div class="building-type">Former Retail Units</div>
+        </div>
+        <div class="building-body">
+          <p>High street and shopping parade units are ideal. Street-level access means immediate community visibility. We transform them into markets, studios, training hubs, and pop-up spaces.</p>
+        </div>
+      </div>
+      <div class="building-card">
+        <div class="building-header">
+          <div class="building-icon">🏢</div>
+          <div class="building-type">Vacant Office Floors</div>
+        </div>
+        <div class="building-body">
+          <p>Upper floors above retail or standalone office buildings work well for desk space, meeting rooms, and skills training. Often overlooked — and often carrying significant rates liability.</p>
+        </div>
+      </div>
+      <div class="building-card">
+        <div class="building-header">
+          <div class="building-icon">🍺</div>
+          <div class="building-type">Closed Pubs & Venues</div>
+        </div>
+        <div class="building-body">
+          <p>Former pubs and community venues carry strong community attachment. Meanwhile use keeps them alive, maintains their asset value, and creates a positive narrative for redevelopment.</p>
+        </div>
+      </div>
+      <div class="building-card">
+        <div class="building-header">
+          <div class="building-icon">🏦</div>
+          <div class="building-type">Former Banks & Post Offices</div>
+        </div>
+        <div class="building-body">
+          <p>High-profile buildings with strong bones and prominent locations. Their closure often leaves a visible gap on the high street — meanwhile use fills it meaningfully.</p>
+        </div>
+      </div>
+      <div class="building-card">
+        <div class="building-header">
+          <div class="building-icon">🏭</div>
+          <div class="building-type">Industrial Units</div>
+        </div>
+        <div class="building-body">
+          <p>Units awaiting planning or redevelopment can serve as maker spaces, workshop hubs, or storage for community organisations — while saving the landlord ongoing rates liability.</p>
+        </div>
+      </div>
+      <div class="building-card">
+        <div class="building-header">
+          <div class="building-icon">🏗️</div>
+          <div class="building-type">Pre-development Sites</div>
+        </div>
+        <div class="building-body">
+          <p>Buildings in the gap between planning approval and construction start are perfect for meanwhile use. We bridge the gap, maintain the property, and hand back on your timetable.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS TIMELINE -->
+<section class="section" style="background:var(--cream);">
+  <div class="section-inner">
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:start;">
+      <div>
+        <div class="section-label">From First Contact</div>
+        <h2 class="section-title">How quickly can this happen?</h2>
+        <p class="section-sub">From your first enquiry to rates relief confirmed — typically 6 to 10 weeks.</p>
+        <a href="#contact" class="btn-primary">Start the Conversation</a>
+      </div>
+      <div class="process-timeline">
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-tag">Week 1</div>
+          <h4>Free Rates Assessment</h4>
+          <p>We calculate your current or imminent rates liability and send you a one-page summary with the potential saving. No obligation, no cost.</p>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-tag">Week 1–2</div>
+          <h4>Site Visit & Agreement</h4>
+          <p>We view the property, agree terms, and our solicitor issues the licence to occupy. Simple document, clear terms.</p>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-tag">Week 2–3</div>
+          <h4>Occupation Begins</h4>
+          <p>We take the keys, conduct safety checks, and begin activating the space. The rates relief clock starts from this date.</p>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-tag">Week 3–10</div>
+          <h4>Relief Confirmed</h4>
+          <p>We submit the application to the council. Mandatory 80% relief is a legal entitlement. We keep you updated and share confirmation in writing.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-band" id="contact">
+  <h2>Have a vacant building?<br>Let's talk numbers.</h2>
+  <p>Send us the address and we'll calculate your rates saving — free, within 48 hours, no commitment.</p>
+  <div class="cta-btns">
+    <a href="mailto:hello@urbanassetupcycle.org.uk" class="btn-primary" style="font-size:16px; padding:16px 32px;">
+      📧 hello@urbanassetupcycle.org.uk
+    </a>
+    <a href="#how-it-works" class="btn-outline" style="font-size:16px; padding:16px 32px;">
+      Learn More First
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Urban Asset <span>Upcycle</span></div>
+  <p>A registered charity working to activate vacant urban buildings through meanwhile use.</p>
+  <p style="margin-top:16px;"><a href="mailto:hello@urbanassetupcycle.org.uk">hello@urbanassetupcycle.org.uk</a> · England & Wales</p>
+  <p style="margin-top:24px; font-size:11px; color:#2a3a2a;">© 2025 Urban Asset Upcycle · Charity registration pending · Meanwhile use · Business rates relief · Community spaces</p>
+</footer>
+
+</body>
+</html>
